@@ -20,6 +20,6 @@ stages:
           inputs:
             containerRegistry: 'sabryfarraj.docker.hub'
             repository: 'sabryfarraj/currency-exchange-devops'
-            command: 'buildAndPush'
+            command: 'push'
             Dockerfile: '**/Dockerfile'
             tags: '$(tag)'
