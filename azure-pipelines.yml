@@ -9,17 +9,17 @@ variables:
 
 stages:
 - stage: Build
-  displayName: Build image
+  displayName: Build and Push Docker Image
   jobs:
   - job: Build
     displayName: Build
     pool:
       name: 'MySelfHostedAgentPool'
-      steps:
-        - task: Docker@2
-          inputs:
-            containerRegistry: 'sabryfarraj.docker.hub'
-            repository: 'sabryfarraj/currency-exchange-devops'
-            command: 'push'
-            Dockerfile: '**/Dockerfile'
-            tags: '$(tag)'
+    steps:
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'imagaaaa'
+        repository: 'sabryfarraj/currency-exchange-devops'
+        command: 'buildAndPush'
+        Dockerfile: '**/Dockerfile'
+        tags: '$(tag)'
