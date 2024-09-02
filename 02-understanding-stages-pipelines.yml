@@ -41,38 +41,7 @@ stages:
     - powershell: |
         Write-Output "$(Build.ArtifactStagingDirectory)"
       displayName: 'Print Build.ArtifactStagingDirectory'
-    - powershell: |
-        java -version
-      displayName: 'Check Java version'
-    - powershell: |
-        node --version
-      displayName: 'Check Node.js version'
-    - powershell: |
-        python --version
-      displayName: 'Check Python version'
-    - powershell: |
-        mvn -version
-      displayName: 'Check Maven version'
-    - powershell: |
-        Get-ChildItem -Recurse -Path "$(Build.ArtifactStagingDirectory)"
-      displayName: 'List files in ArtifactStagingDirectory'
-    - task: CopyFiles@2
-      inputs:
-        SourceFolder: '$(System.DefaultWorkingDirectory)'
-        Contents: |
-          **/*.yaml
-          **/*.tf
-        TargetFolder: '$(Build.ArtifactStagingDirectory)'
-      displayName: 'Copy YAML and TF files'
-    - powershell: |
-        Get-ChildItem -Recurse -Path "$(Build.ArtifactStagingDirectory)"
-      displayName: 'List files in ArtifactStagingDirectory after copy'
-    - task: PublishBuildArtifacts@1
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        ArtifactName: 'drop'
-        publishLocation: 'Container'
-      displayName: 'Publish Build Artifacts'
+    
   # - job: SecondJob
   #   steps:
   #   - powershell: |
