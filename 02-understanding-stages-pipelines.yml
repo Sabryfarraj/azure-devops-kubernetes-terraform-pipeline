@@ -7,27 +7,55 @@ trigger:
 - main
 
 pool:
-  name : 'MySelfHostedAgentPool'
+  name: 'MySelfHostedAgentPool'
 
 stages:
 - stage: Build
   jobs:
   - job: FirstJob
     steps:
-    - bash: echo Build FirstJob
-    - bash: echo $(PipelineLevelVariable)
-    - bash: echo $(Build.BuildNumber)
-    - bash: echo $(Build.BuildId)
-    - bash: echo $(Build.SourceBranchName)
-    - bash: echo $(Build.SourcesDirectory)
-    - bash: echo $(System.DefaultWorkingDirectory)
-    - bash: ls -R $(System.DefaultWorkingDirectory)
-    - bash: echo $(Build.ArtifactStagingDirectory)
-    - bash: java -version
-    - bash: node --version
-    - bash: python --version 
-    - bash: mvn -version 
-    - bash: ls -R $(Build.ArtifactStagingDirectory)
+    - powershell: |
+        Write-Output "Build FirstJob"
+      displayName: 'Print Build FirstJob'
+    - powershell: |
+        Write-Output "$(PipelineLevelVariable)"
+      displayName: 'Print PipelineLevelVariable'
+    - powershell: |
+        Write-Output "$(Build.BuildNumber)"
+      displayName: 'Print Build.BuildNumber'
+    - powershell: |
+        Write-Output "$(Build.BuildId)"
+      displayName: 'Print Build.BuildId'
+    - powershell: |
+        Write-Output "$(Build.SourceBranchName)"
+      displayName: 'Print Build.SourceBranchName'
+    - powershell: |
+        Write-Output "$(Build.SourcesDirectory)"
+      displayName: 'Print Build.SourcesDirectory'
+    - powershell: |
+        Write-Output "$(System.DefaultWorkingDirectory)"
+      displayName: 'Print System.DefaultWorkingDirectory'
+    - powershell: |
+        Get-ChildItem -Recurse -Path "$(System.DefaultWorkingDirectory)"
+      displayName: 'List files in DefaultWorkingDirectory'
+    - powershell: |
+        Write-Output "$(Build.ArtifactStagingDirectory)"
+      displayName: 'Print Build.ArtifactStagingDirectory'
+    - powershell: |
+        java -version
+      displayName: 'Check Java version'
+    - powershell: |
+        node --version
+      displayName: 'Check Node.js version'
+    - powershell: |
+        python --version
+      displayName: 'Check Python version'
+    - powershell: |
+        mvn -version
+      displayName: 'Check Maven version'
+    - powershell: |
+        Get-ChildItem -Recurse -Path "$(Build.ArtifactStagingDirectory)"
+      displayName: 'List files in ArtifactStagingDirectory'
     - task: CopyFiles@2
       inputs:
         SourceFolder: '$(System.DefaultWorkingDirectory)'
@@ -35,15 +63,21 @@ stages:
           **/*.yaml
           **/*.tf
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
-    - bash: ls -R $(Build.ArtifactStagingDirectory)
+      displayName: 'Copy YAML and TF files'
+    - powershell: |
+        Get-ChildItem -Recurse -Path "$(Build.ArtifactStagingDirectory)"
+      displayName: 'List files in ArtifactStagingDirectory after copy'
     - task: PublishBuildArtifacts@1
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'drop'
         publishLocation: 'Container'
+      displayName: 'Publish Build Artifacts'
   # - job: SecondJob
   #   steps:
-  #   - bash: echo Build SecondJob
+  #   - powershell: |
+  #       Write-Output "Build SecondJob"
+  #     displayName: 'Print Build SecondJob'
 # - stage: DevDeploy
 #   variables:
 #     environment: Dev
@@ -51,7 +85,9 @@ stages:
 #   jobs:
 #   - job: DevDeployJob
 #     steps:
-#     - bash: echo $(environment)DeployJob
+#     - powershell: |
+#         Write-Output "$(environment)DeployJob"
+#       displayName: 'Print DevDeployJob'
 # - stage: QADeploy
 #   variables:
 #     environment: QA
@@ -59,7 +95,9 @@ stages:
 #   jobs:
 #   - job: QADeployJob
 #     steps:
-#     - bash: echo $(environment)DeployJob
+#     - powershell: |
+#         Write-Output "$(environment)DeployJob"
+#       displayName: 'Print QADeployJob'
 # - stage: ProdDeploy
 #   dependsOn: 
 #   - DevDeploy
@@ -67,4 +105,6 @@ stages:
 #   jobs:
 #   - job: ProdDeployJob
 #     steps:
-#     - bash: echo ProdDeployJob
+#     - powershell: |
+#         Write-Output "ProdDeployJob"
+#       displayName: 'Print ProdDeployJob'
