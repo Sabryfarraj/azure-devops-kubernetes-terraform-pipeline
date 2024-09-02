@@ -4,11 +4,41 @@ trigger:
 pool:
   name : 'MySelfHostedAgentPool'
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+stages:
+- stage: Build
+  jobs:
+  - job: BuildJob
+    steps:
+    - task: PowerShell@2
+      inputs:
+        targetType: 'inline'
+        script: |
+          Write-Output "Do the build"
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+- stage: DevDeploy
+  jobs:
+  - deployment: DevDeployJob
+    environment: Dev
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: PowerShell@2
+            inputs:
+              targetType: 'inline'
+              script: |
+                Write-Output "deploy to Dev"
+
+- stage: QADeploy
+  jobs:
+  - deployment: QADeployJob
+    environment: QA
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: PowerShell@2
+            inputs:
+              targetType: 'inline'
+              script: |
+                Write-Output "deploy to QA"
