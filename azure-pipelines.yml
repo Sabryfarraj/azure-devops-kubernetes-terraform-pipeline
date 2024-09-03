@@ -2,7 +2,7 @@ trigger:
 - master
 
 pool:
-  name: 'MySelfHostedAgentPool'
+  vmImage: 'ubuntu-latest'
 
 steps:
 - script: echo K8S Terraform Azure!
