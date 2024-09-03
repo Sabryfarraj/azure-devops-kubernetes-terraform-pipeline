@@ -1,25 +1,27 @@
 trigger:
-- main
+- master
 
-resources:
-- repo: self
+pool:
+  name: 'MySelfHostedAgentPool'
 
-variables:
-  tag: '$(Build.BuildId)'
-
-stages:
-- stage: Build
-  displayName: Build and Push Docker Image
-  jobs:
-  - job: Build
-    displayName: Build
-    pool:
-      name: 'MySelfHostedAgentPool'
-    steps:
-    - task: Docker@2
-      inputs:
-        containerRegistry: 'imagaaaa'
-        repository: 'sabryfarraj/currency-exchange-devops'
-        command: 'buildAndPush'
-        Dockerfile: '**/Dockerfile'
-        tags: '$(tag)'
+steps:
+- script: echo K8S Terraform Azure!
+  displayName: 'Run a one-line script'
+- task: DownloadSecureFile@1
+  name: PublicKey
+  inputs:
+    secureFile: 'azure_rsa.pub'
+- task: TerraformCLI@2
+  inputs:
+    command: 'init'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/azure/kubernetes'
+    commandOptions: '-var client_id=$(client_id) -var client_secret=$(client_secret) -var ssh_public_key$(PublicKey.secureFilePath)'
+    backendType: 'azurerm'
+    backendServiceArm: 'azure-service-manager-subscription'
+    ensureBackend: true
+    backendAzureRmResourceGroupName: 'terraform-backend-rg'
+    backendAzureRmResourceGroupLocation: 'westeurope'
+    backendAzureRmStorageAccountName: 'sabryfarraj'
+    backendAzureRmContainerName: 'sabryfarrajcontianer'
+    backendAzureRmKey: 'kubernetes-dev.tfstate'
+    allowTelemetryCollection: true
